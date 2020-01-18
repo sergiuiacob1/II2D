@@ -10,8 +10,8 @@ class GeneratorBox {
     this.birthRate = birthRate;
     this.min = new Vector(0, 0);
     this.max = new Vector(500, 500);
-    this.minTimeToLive = 0;
-    this.maxTimeToLive = 10;
+    this.minTimeToLive = 30;
+    this.maxTimeToLive = 60;
   }
 
 
@@ -20,7 +20,8 @@ class GeneratorBox {
     p.color.r = randInt(0, 255);
     p.color.g = randInt(0, 255);
     p.color.b = randInt(0, 255);
-    p.timeToLive = randInt(this.minTimeToLive, this.maxTimeToLive);
+    p.initialTimeToLive = randInt(this.minTimeToLive, this.maxTimeToLive);
+    p.timeToLive = p.initialTimeToLive;
   }
 };
 
@@ -36,11 +37,12 @@ class Particle {
     this.position = new Vector(0, 0);
     this.color = { r: 0, g: 0, b: 0 }
     this.isAlive = false;
+    this.initialTimeToLive = 0;
     this.timeToLive = 0;
   }
 
   draw() {
-    ctx.fillStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+    ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.timeToLive / this.initialTimeToLive})`;
     ctx.fillRect(this.position.x, this.position.y, 5, 5);
   }
 
@@ -66,25 +68,52 @@ class ParticleManager {
   }
 
   updateGenerator(generator, start, end) {
+    // slow version:
+    // // kill
+    // for (var i = start; i < end; ++i)
+    //   if (this.all[i].timeToLive <= 0)
+    //     this.all[i].isAlive = false;
+
+    // //give birth
+    // var count = 0;
+    // for (var i = start; i < end; ++i)
+    //   if (this.all[i].isAlive == false) {
+    //     this.all[i].isAlive = true;
+    //     generator.initParticle(this.all[i]);
+    //     ++count;
+    //     if (count > Math.floor(generator.birthRate))
+    //       break;
+    //   }
+    // generator.nbBirth += count;
+    // generator.nbBirth = Math.min(generator.nbBirth, end - start);
+    // return;
+
     // kill particles
-    var no_killed = 0;
     for (var i = start; i < start + generator.nbBirth; ++i) {
       if (this.all[i].timeToLive <= 0) {
-        // this particle must die
+        // gotta kill it
         this.all[i].isAlive = false;
-        swap(this.all[i], this.all[start + generator.nbBirth - 1 - no_killed]);
-        ++no_killed;
+        // keep only the alive particles at the beginning of the array
+        // swap with the last alive particle
+        var aux = this.all[i];
+        this.all[i] = this.all[start + generator.nbBirth - 1];
+        this.all[start + generator.nbBirth - 1] = aux;
+        // swap(this.all[i], this.all[start + generator.nbBirth - 1]);
+        --generator.nbBirth;
+        --i;
       }
     }
-    generator.nbBirth -= no_killed;
 
     // give birth to new particles
     generator.nbBirth += generator.birthRate;
-    generator.nbBirth = Math.min(generator.nbBirth, end - start - 1);
+    generator.nbBirth = Math.min(generator.nbBirth, end - start);
 
-    for (var i = Math.floor(start + generator.nbBirth); i >= start; --i) {
-      if (this.all[i].isAlive)
+    for (var i = Math.floor(start + generator.nbBirth) - 1; i >= start; --i) {
+      // optimisation
+      // we can do this because all of our alive particles are at the beginning of the array
+      if (this.all[i].isAlive == true)
         break;
+      console.log('giving birth');
       this.all[i].isAlive = true;
       generator.initParticle(this.all[i]);
     }
