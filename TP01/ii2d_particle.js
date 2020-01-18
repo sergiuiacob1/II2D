@@ -11,7 +11,7 @@ class GeneratorBox {
     this.min = new Vector(0, 0);
     this.max = new Vector(500, 500);
     this.minTimeToLive = 30;
-    this.maxTimeToLive = 60;
+    this.maxTimeToLive = 120;
   }
 
 
@@ -23,7 +23,19 @@ class GeneratorBox {
     p.initialTimeToLive = randInt(this.minTimeToLive, this.maxTimeToLive);
     p.timeToLive = p.initialTimeToLive;
   }
+
+  distance(mouse) {
+    // mouse is a Vector
+    return Vector.distance(this.min, mouse);
+  }
+
+  move(mouse) {
+    engine.particleManager.selected.min.add(mouse);
+    engine.particleManager.selected.max.add(mouse);
+  }
 };
+
+
 
 
 
@@ -59,11 +71,24 @@ class Particle {
 class ParticleManager {
   constructor() {
     this.all = []
-    this.nbAliveMax = 1000;
-    this.generatorList = []
+    this.nbAliveMax = 500;
+    this.generatorList = [];
+    this.selected = null;
 
     for (var i = 0; i < this.nbAliveMax; ++i) {
       this.all.push(new Particle());
+    }
+  }
+
+  select(mouse) {
+    var minDistance = Infinity;
+    var currentDistance;
+    for (var i = 0; i < this.generatorList.length; ++i) {
+      currentDistance = this.generatorList[i].distance(mouse);
+      if (currentDistance < minDistance) {
+        this.selected = this.generatorList[i];
+        minDistance = currentDistance;
+      }
     }
   }
 
@@ -98,7 +123,6 @@ class ParticleManager {
         var aux = this.all[i];
         this.all[i] = this.all[start + generator.nbBirth - 1];
         this.all[start + generator.nbBirth - 1] = aux;
-        // swap(this.all[i], this.all[start + generator.nbBirth - 1]);
         --generator.nbBirth;
         --i;
       }
@@ -113,7 +137,6 @@ class ParticleManager {
       // we can do this because all of our alive particles are at the beginning of the array
       if (this.all[i].isAlive == true)
         break;
-      console.log('giving birth');
       this.all[i].isAlive = true;
       generator.initParticle(this.all[i]);
     }
@@ -139,10 +162,3 @@ class ParticleManager {
       this.all[this.nbAliveMax / 2 + i].draw();
   }
 };
-
-
-function swap(x, y) {
-  var t = x;
-  x = y;
-  y = t;
-}

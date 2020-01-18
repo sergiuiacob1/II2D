@@ -19,6 +19,7 @@ var setAttributes = function (v, lAttrib) {
 class Engine {
   constructor() {
     this.particleManager = new ParticleManager();
+    this.obstacleManager = new ObstacleManager();
     this.time = 0;
     this.deltaTime = 0.1;
   }
@@ -28,6 +29,7 @@ class Engine {
     ctx.fillStyle = '#ffa577';
     ctx.fillRect(0, 0, 500, 500);
     this.particleManager.draw();
+    this.obstacleManager.draw();
   }
 
   updateData() {
