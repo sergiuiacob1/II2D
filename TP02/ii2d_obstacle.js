@@ -2,7 +2,7 @@ class Circle {
     constructor(center, radius) {
         this.center = center;
         this.radius = radius;
-        this.color = "purple";
+        this.color = "red";
     }
 
     draw() {
@@ -19,6 +19,10 @@ class Circle {
             return this.radius - centerDistance;
         return centerDistance - this.radius;
     }
+
+    move(m) {
+        this.center.add(m);
+    }
 }
 
 class Segment {
@@ -26,6 +30,19 @@ class Segment {
         this.a = a;
         this.b = b;
         this.color = "red";
+        this.zone = null;
+    }
+
+    move(m) {
+        if (this.zone == "a")
+            this.a.add(m);
+        else
+            if (this.zone == "b")
+                this.b.add(m);
+            else {
+                this.a.add(m);
+                this.b.add(m);
+            }
     }
 
     draw() {
@@ -36,15 +53,58 @@ class Segment {
         ctx.stroke();
     }
 
-    distance() {
+    distance(m) {
+        this.zone = this.getZone(m);
+        if (this.zone == "a")
+            return Vector.distance(this.a, m);
+        else
+            if (this.zone == "b")
+                return Vector.distance(this.b, m);
+        return this.getDistanceToLine(m);
+    }
 
+    getDistanceToLine(m) {
+        var ab = Vector.subtract(this.b, this.a);
+        var n = new Vector(-ab.y, ab.x);
+        var am = Vector.subtract(m, this.a);
+        return Math.abs(Vector.dot(n, am)) / n.length();
+    }
+
+    getZone(m) {
+        // we're in the zone a
+        var am = Vector.subtract(m, this.a);
+        var ab = Vector.subtract(this.b, this.a);
+        if (Vector.dot(am, ab) < 0)
+            return "a";
+
+        // we're in zone b
+        var bm = Vector.subtract(m, this.b);
+        var ba = Vector.subtract(this.a, this.b);
+        if (Vector.dot(bm, ba) < 0)
+            return "b";
+
+        // we're in zone line
+        // allow for a margin of error
+        var distanceToLine = this.getDistanceToLine(m);
+        var distA = Vector.distance(this.a, m);
+        var distB = Vector.distance(this.b, m);
+        var minDist = Math.min(distA, distB);
+        var distanceFromProjectionToSegmentEnd = Math.sqrt(Math.pow(minDist, 2), Math.pow(distanceToLine, 2));
+        if (distanceFromProjectionToSegmentEnd <= Segment.errorMargin)
+            if (distA < distB)
+                return "a";
+            else
+                return "b";
+        return "line";
     }
 }
+
+Segment.errorMargin = 25;
 
 class ObstacleManager {
     constructor() {
         this.all = [];
-        this.select = null;
+        this.selected = null;
     }
 
     draw() {
