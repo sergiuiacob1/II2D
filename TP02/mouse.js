@@ -21,6 +21,6 @@ function handleMouseMove(event) {
     var mouseX = event.movementX;
     var mouseY = event.movementY;
     var mouse = new Vector(mouseX, mouseY);
-    // engine.particleManager.selected.move(mouse);
+    engine.particleManager.selected.move(mouse);
     engine.obstacleManager.selected.move(mouse);
 }
