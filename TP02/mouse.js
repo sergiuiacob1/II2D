@@ -24,3 +24,8 @@ function handleMouseMove(event) {
     engine.particleManager.selected.move(mouse);
     engine.obstacleManager.selected.move(mouse);
 }
+
+function handleMouseLeave(event) {
+    mouseIsPressed = false;
+    engine.obstacleManager.selected.color = "red";
+}

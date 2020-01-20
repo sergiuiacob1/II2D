@@ -22,6 +22,7 @@ function addEventListeners() {
   canvas.addEventListener('mousedown', handleMouseDown, false);
   canvas.addEventListener('mousemove', handleMouseMove, false);
   canvas.addEventListener('mouseup', handleMouseUp, false);
+  canvas.addEventListener('mouseleave', handleMouseLeave, false);
 }
 
 function addObstacles() {

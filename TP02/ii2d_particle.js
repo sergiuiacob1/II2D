@@ -71,7 +71,7 @@ class Particle {
 class ParticleManager {
   constructor() {
     this.all = []
-    this.nbAliveMax = 500;
+    this.nbAliveMax = 300;
     this.generatorList = [];
     this.selected = null;
 
