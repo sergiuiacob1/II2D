@@ -4,13 +4,17 @@ function handleMouseDown(event) {
     var mouse = new Vector(mouseX, mouseY);
     engine.particleManager.select(mouse);
     engine.obstacleManager.select(mouse);
-    engine.obstacleManager.selected.color = "green";
+    if (engine.obstacleManager.selected != null)
+        engine.obstacleManager.selected.color = "green";
     mouseIsPressed = true;
 }
 
 function handleMouseUp(event) {
     mouseIsPressed = false;
-    engine.obstacleManager.selected.color = "red";
+    if (engine.obstacleManager.selected != null) {
+        engine.obstacleManager.selected.color = "red";
+        engine.obstacleManager.selected = null;
+    }
 }
 
 function handleMouseMove(event) {
@@ -27,5 +31,6 @@ function handleMouseMove(event) {
 
 function handleMouseLeave(event) {
     mouseIsPressed = false;
-    engine.obstacleManager.selected.color = "red";
+    if (engine.obstacleManager.selected != null)
+        engine.obstacleManager.selected.color = "red";
 }

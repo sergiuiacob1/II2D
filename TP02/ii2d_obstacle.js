@@ -123,5 +123,10 @@ class ObstacleManager {
                 minDistance = currentDistance;
             }
         }
+        // only select obstacles if they're within ObstacleManager.clickZone pixels
+        if (minDistance > ObstacleManager.clickZone)
+            this.selected = null;
     }
 }
+
+ObstacleManager.clickZone = 50;
