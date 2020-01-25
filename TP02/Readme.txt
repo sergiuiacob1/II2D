@@ -10,8 +10,6 @@ Ajouts ou améliorations éventuels:
 	- Segment bonus: si on clique sur la zone "line" mais quelle est proche d'une des bornes du segment, on déplace la plus proche borne du segment.
 	- Si la souris sort du canvas elle seras désactiver
 	- Les obstacles sont déplacés seulement si nous cliquons près d'eux (ObstacleManager.clickZone)
+	- Si la souris quitte le "canvas", on arrête de déplacer les obstacles
 	 
-Points difficiles :
-
-
-
+Points difficiles:
