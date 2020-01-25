@@ -18,15 +18,15 @@ function handleMouseUp(event) {
 }
 
 function handleMouseMove(event) {
-    if (engine.particleManager.selected == null || mouseIsPressed == false)
-        return;
-    if (engine.obstacleManager.selected == null)
+    if (mouseIsPressed == false)
         return;
     var mouseX = event.movementX;
     var mouseY = event.movementY;
     var mouse = new Vector(mouseX, mouseY);
-    engine.particleManager.selected.move(mouse);
-    engine.obstacleManager.selected.move(mouse);
+    if (engine.particleManager.selected != null)
+        engine.particleManager.selected.move(mouse);
+    if (engine.obstacleManager.selected != null)
+        engine.obstacleManager.selected.move(mouse);
 }
 
 function handleMouseLeave(event) {
