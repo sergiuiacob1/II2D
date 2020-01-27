@@ -22,6 +22,7 @@ class Engine {
     this.obstacleManager = new ObstacleManager();
     this.time = 0;
     this.deltaTime = 0.01;
+    this.epsilon = 1;
   }
 
   draw() {
@@ -76,12 +77,39 @@ class Engine {
   solveCollision(particle, obstacle) {
     var res = obstacle.intersect(particle.oldPosition, particle.position);
     if (res.isIntersect == true) {
-      particle.position = particle.oldPosition;
-      // this.impulse (particle, res.ncol, res.pcol);
+      // particle.position = particle.oldPosition;
+      this.impulse(particle, res.ncol, res.pcol);
     }
   }
 
-  impulse(particle, ncol, pcol){
+  impulse(particle, ncol, pcol) {
+    var vcol, vn_new;
+    // make the normal unitary (length = 1)
+    ncol.divide(ncol.length());
+
+    // change the velocity
+    // vcol = vn_col + vt_col;
+
+    // vn_col = -epsilon * vn_new
+    // vn_new = (v_new * ncol) * ncol, with ncol being unitary
+
+    // vt_col = vt_new, vt_new = v_new - vn_new
+
+    // so, in the end:
+    // vcol = v_new - (1 + epsilon)*vn_new
+
+    vn_new = Vector.scalarProduct(ncol, Vector.dot(particle.velocity, ncol));
+    vcol = Vector.subtract(Vector.scalarProduct(vn_new, 1 + this.epsilon), particle.velocity);
+    particle.velocity = vcol;
+
+
+    // correct position
+    // xcol = xnew + (1 + epsilon) * H
+    // H = ((m - xnew)*ncol)*ncol
+    var H = Vector.scalarProduct(ncol, Vector.dot(Vector.subtract(particle.position, pcol), ncol));
+    var xcol = Vector.add(particle.position, Vector.scalarProduct(H, 1 + this.epsilon));
+    particle.position = xcol;
+
 
   }
 }

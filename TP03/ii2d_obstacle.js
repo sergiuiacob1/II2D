@@ -31,8 +31,7 @@ class Circle {
 
     intersect(p1, p2) {
         var isIntersect;
-        var normal;
-        var position;
+        var ncol, pcol;
         var p1IsInside = this.pointIsInside(p1);
         var p2IsInside = this.pointIsInside(p2);
 
@@ -41,10 +40,16 @@ class Circle {
         else
             isIntersect = false;
 
+        if (isIntersect) {
+            pcol = p1;
+            ncol = Vector.subtract(p1, this.center);
+            ncol.divide(ncol.length());
+        }
+
         return {
             isIntersect: isIntersect,
-            normal: new Vector(1, 0),
-            position: new Vector(1, 1)
+            ncol: ncol,
+            pcol: pcol
         };
     }
 }
@@ -71,13 +76,12 @@ class Segment {
 
     intersect(p1, p2) {
         var isIntersect;
-        var normal;
-        var position;
+        var ncol;
 
         var ab = Vector.subtract(this.b, this.a);
-        var n = new Vector(-ab.y, ab.x);
-        var firstAngle = Vector.dot(Vector.subtract(p1, this.a), n);
-        var secondAngle = Vector.dot(Vector.subtract(p2, this.a), n);
+        ncol = new Vector(-ab.y, ab.x);
+        var firstAngle = Vector.dot(Vector.subtract(p1, this.a), ncol);
+        var secondAngle = Vector.dot(Vector.subtract(p2, this.a), ncol);
         if (firstAngle * secondAngle < 0) {
             var ap2 = Vector.subtract(p2, this.a);
             var ab = Vector.subtract(this.b, this.a);
@@ -93,8 +97,8 @@ class Segment {
 
         return {
             isIntersect: isIntersect,
-            normal: new Vector(1, 0),
-            position: new Vector(1, 1)
+            ncol: ncol,
+            pcol: this.a
         };
     }
 
