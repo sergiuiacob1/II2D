@@ -4,8 +4,10 @@ function handleMouseDown(event) {
     var mouse = new Vector(mouseX, mouseY);
     engine.particleManager.select(mouse);
     engine.obstacleManager.select(mouse);
-    if (engine.obstacleManager.selected != null)
+    if (engine.obstacleManager.selected != null){
         engine.obstacleManager.selected.color = "green";
+        engine.particleManager.selected = null;
+    }
     mouseIsPressed = true;
 }
 
