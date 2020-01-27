@@ -113,13 +113,13 @@ class ParticleManager {
     // generator.nbBirth = Math.min(generator.nbBirth, end - start);
     // return;
 
-    // kill particles
+    // Arrêter les particules
     for (var i = start; i < start + generator.nbBirth; ++i) {
       if (this.all[i].timeToLive <= 0) {
-        // gotta kill it
-        this.all[i].isAlive = false;
-        // keep only the alive particles at the beginning of the array
-        // swap with the last alive particle
+        // On doit l'arrêter
+        this.all[i].isAlive = false
+        // Il garde juste les particles actives au debut du tableau
+        // Swap avec la dernière particule active
         var aux = this.all[i];
         this.all[i] = this.all[start + generator.nbBirth - 1];
         this.all[start + generator.nbBirth - 1] = aux;
@@ -128,13 +128,13 @@ class ParticleManager {
       }
     }
 
-    // give birth to new particles
+    // Créer des nouvelle particules
     generator.nbBirth += generator.birthRate;
     generator.nbBirth = Math.min(generator.nbBirth, end - start);
 
     for (var i = Math.floor(start + generator.nbBirth) - 1; i >= start; --i) {
-      // optimisation
-      // we can do this because all of our alive particles are at the beginning of the array
+      // Optimisation
+      // On peut faire ça parceque toutes les particules sont au debut du tableau
       if (this.all[i].isAlive == true)
         break;
       this.all[i].isAlive = true;
@@ -143,13 +143,13 @@ class ParticleManager {
   }
 
   update() {
-    // update the time to live
+    // MAJ du timeToLive
     this.all.forEach(element => {
       if (element.isAlive)
         --element.timeToLive;
     });
 
-    // each generator takes care of a portion of the particles
+    // Chaque générateur se charge d'une partie des particules
     this.updateGenerator(this.generatorList[0], 0, this.nbAliveMax / 2);
     this.updateGenerator(this.generatorList[1], this.nbAliveMax / 2, this.nbAliveMax);
   }

@@ -15,7 +15,7 @@ class Circle {
     distance(point) {
         var centerDistance = Vector.distance(this.center, point);
         if (centerDistance < this.radius)
-            //inside the circle
+            //L'interieur du cercle
             return this.radius - centerDistance;
         return centerDistance - this.radius;
     }
@@ -71,20 +71,20 @@ class Segment {
     }
 
     getZone(m) {
-        // we're in the zone a
+        // Dans la zone a
         var am = Vector.subtract(m, this.a);
         var ab = Vector.subtract(this.b, this.a);
         if (Vector.dot(am, ab) < 0)
             return "a";
 
-        // we're in zone b
+        // Dans la zone b
         var bm = Vector.subtract(m, this.b);
         var ba = Vector.subtract(this.a, this.b);
         if (Vector.dot(bm, ba) < 0)
             return "b";
 
-        // we're in zone line
-        // allow for a margin of error
+        // Dans la zone line
+        // Pour une marge d'erreur
         var distanceToLine = this.getDistanceToLine(m);
         var distA = Vector.distance(this.a, m);
         var distB = Vector.distance(this.b, m);
@@ -123,7 +123,7 @@ class ObstacleManager {
                 minDistance = currentDistance;
             }
         }
-        // only select obstacles if they're within ObstacleManager.clickZone pixels
+        // Select l'obstacle si il est dans la zone ObstacleManager.clickZone pixels
         if (minDistance > ObstacleManager.clickZone)
             this.selected = null;
     }

@@ -18,7 +18,7 @@ class Vector {
     return new Vector(p2.x - p1.x, p2.y - p1.y);
   }
 
-  // distance between 2 vectors
+  // distance entre 2 vecteurs
   static distance(p1, p2) {
     return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
   }
@@ -38,12 +38,12 @@ class Vector {
     return this;
   }
 
-  /// @return a copy of this
+  /// @return une copie de this
   clone() {
     return new Vector(this.x, this.y);
   }
 
-  /// copy p to this
+  /// copie p à this
   set(p) {
     this.x = p.x;
     this.y = p.y;
