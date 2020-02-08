@@ -60,8 +60,8 @@ class Circle {
         return oldCorrect;
     }
 
-    getVitesse(){
-        return Vector.subtract (this.oldCenter, this.center);
+    getVitesse(deltaTime){
+        return Vector.scalarProduct(Vector.subtract (this.oldCenter, this.center), deltaTime);
     }
 }
 
@@ -176,11 +176,11 @@ class Segment {
         return oldCorrect;
     }
 
-    getVitesse(){
+    getVitesse(deltaTime){
         let oldMiddle = new Vector((this.oldA.x + this.oldB.x) / 2, (this.oldA.y + this.oldB.y) / 2);
         let middle = new Vector((this.a.x + this.b.x) / 2, (this.a.y + this.b.y) / 2);
         let difference = Vector.subtract(oldMiddle, middle);
-        return difference;
+        return difference.divide(deltaTime);
     }
 }
 

@@ -22,7 +22,7 @@ class Engine {
     this.obstacleManager = new ObstacleManager();
     this.time = 0;
     this.deltaTime = 0.01;
-    this.epsilon = 0.1;
+    this.epsilon = 0.5;
   }
 
   draw() {
@@ -63,19 +63,35 @@ class Engine {
     var currentGenerator = 0;
     for (var i = 0; i < this.particleManager.nbAliveMax; ++i) {
       if (this.particleManager.all[i].isAlive == false) {
+        // I'm finished with the alive particles for this generator
         i = currentGenerator * this.particleManager.nbAliveMax / this.particleManager.generatorList.length;
         --i;
         ++currentGenerator;
         continue;
       }
 
+      var adjustments = {
+        "position": new Vector(0, 0),
+        "velocity": new Vector(0, 0)
+      };
+
       this.obstacleManager.all.forEach(obstacle => {
-        this.solveCollision(this.particleManager.all[i], obstacle);
+        let res = this.solveCollision(this.particleManager.all[i], obstacle);
+        adjustments["position"].add(res["position"]);
+        adjustments["velocity"].add(res["velocity"]);
       });
+
+      // after treating all obstacles, adjust the particle's position and velocity
+      this.particleManager.all[i].position.add(adjustments["position"]);
+      this.particleManager.all[i].velocity.add(adjustments["velocity"]);
     }
   }
 
   solveCollision(particle, obstacle) {
+    var originalValues = {
+      "position": particle.position.clone(),
+      "velocity": particle.velocity.clone()
+    };
     var correctOldPosition = obstacle.getOldCorrectPosition(particle);
     var res = obstacle.intersect(correctOldPosition, particle.position);
     if (res.isIntersect == true) {
@@ -91,10 +107,20 @@ class Engine {
       }
 
       // augment speed
-      let vitesse = obstacle.getVitesse().divide(this.deltaTime);
-      let oldv = particle.velocity.clone();
+      let vitesse = obstacle.getVitesse(this.deltaTime);
       particle.velocity.add(vitesse);
     }
+
+    // return the difference that it should be made
+    var res = {
+      "position": Vector.subtract(originalValues["position"], particle.position),
+      "velocity": Vector.subtract(originalValues["velocity"], particle.velocity),
+    };
+
+    particle.position = originalValues["position"];
+    particle.velocity = originalValues["velocity"];
+
+    return res;
   }
 
   impulse(particle, ncol, pcol) {
