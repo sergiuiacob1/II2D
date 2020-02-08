@@ -36,6 +36,9 @@ class Engine {
     this.epsilon = parseFloat(document.getElementById("epsilon-value").value);
     document.getElementById("label-epsilon-value").innerHTML = `ε=${this.epsilon}`;
 
+    this.deltaTime = parseFloat(document.getElementById("deltatime-value").value);
+    document.getElementById("label-deltatime-value").innerHTML = `∂T=${this.deltaTime}`;
+
     this.particleManager.update();
     this.motion();
     this.collision();

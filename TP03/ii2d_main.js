@@ -29,7 +29,7 @@ function addEventListeners() {
 }
 
 function addObstacles() {
-  var obs1 = new Circle(new Vector(100, 100), 50);
+  var obs1 = new Circle(new Vector(100, 200), 50);
   var obs2 = new Segment(new Vector(100, 300), new Vector(250, 500));
   engine.obstacleManager.all.push(obs1, obs2);
 }

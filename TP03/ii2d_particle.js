@@ -10,8 +10,8 @@ class GeneratorBox {
     this.birthRate = birthRate;
     this.min = new Vector(0, 0);
     this.max = new Vector(CANVAS_WIDTH - 50, CANVAS_HEIGHT - 50);
-    this.minTimeToLive = 60 * 2;
-    this.maxTimeToLive = 60 * 5;
+    this.minTimeToLive = 60 * 3;
+    this.maxTimeToLive = 60 * 6;
   }
 
 
@@ -68,7 +68,10 @@ class Particle {
 
   draw() {
     ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.timeToLive / this.initialTimeToLive})`;
-    ctx.fillRect(this.position.x, this.position.y, 5, 5);
+    // ctx.fillRect(this.position.x, this.position.y, 5, 5);
+    ctx.beginPath();
+    ctx.arc(this.position.x, this.position.y, 2.5, 0, 2 * Math.PI, false);
+    ctx.fill();
   }
 
   motion(deltaTime, forces) {
@@ -147,11 +150,8 @@ class ParticleManager {
 
   motion(deltaTime) {
     let step = Math.floor(this.nbAliveMax / this.generatorList.length);
-    let start = 0, end = step;
+    let start = 0;
     for (var i = 0; i < this.generatorList.length; ++i) {
-      if (i == this.generatorList.length - 1)
-        end = this.nbAliveMax;
-
       for (var j = start; j < start + this.generatorList[i].nbBirth; ++j) {
         let forces = [];
         if (this.repulsorIsActivated)
@@ -159,8 +159,7 @@ class ParticleManager {
         this.all[j].motion(deltaTime, forces);
       }
 
-      start = end;
-      end += step;
+      start += step;
     }
   }
 
@@ -212,11 +211,11 @@ class ParticleManager {
 
     if (this.shouldAddRandomGenerator) {
       this.shouldAddRandomGenerator = false;
-      let generator = new GeneratorBox(0, randInt(0, 10));
+      let generator = new GeneratorBox(0, randInt(1, 10));
       let x = randInt(50, CANVAS_WIDTH - 200);
       let y = randInt(50, CANVAS_HEIGHT - 200);
       generator.min.setXY(x, y); // setXY à faire dans la classe Vector
-      generator.max.setXY(x + randInt(20, 100), y + randInt(20, 100));
+      generator.max.setXY(x + randInt(20, 30), y + randInt(20, 30));
       this.addGenerators([generator]);
       return;
     }
@@ -230,20 +229,24 @@ class ParticleManager {
     // Chaque générateur se charge d'une partie des particules
     let step = Math.floor(this.nbAliveMax / this.generatorList.length);
     let start = 0, end = step;
-    for (var i = 0; i < this.generatorList.length - 1; ++i) {
+    for (var i = 0; i < this.generatorList.length; ++i) {
+      if (i == this.generatorList.length - 1)
+        end = this.nbAliveMax;
       this.updateGenerator(this.generatorList[i], start, end);
       start = end;
       end += step;
     }
-
-    this.updateGenerator(this.generatorList[i], start, this.nbAliveMax);
   }
 
   draw() {
-    for (var i = 0; i < this.generatorList[0].nbBirth; ++i)
-      this.all[i].draw();
+    let step = Math.floor(this.nbAliveMax / this.generatorList.length);
+    let start = 0;
 
-    for (var i = 0; i < this.generatorList[1].nbBirth; ++i)
-      this.all[this.nbAliveMax / 2 + i].draw();
+    for (let i = 0; i < this.generatorList.length; ++i) {
+      for (let j = start; j < start + this.generatorList[i].nbBirth; ++j)
+        this.all[j].draw();
+
+      start += step;
+    }
   }
 };
