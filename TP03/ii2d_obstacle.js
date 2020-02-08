@@ -3,6 +3,7 @@ class Circle {
         this.center = center;
         this.radius = radius;
         this.color = "red";
+        this.oldCenter = center.clone();
     }
 
     draw() {
@@ -52,6 +53,16 @@ class Circle {
             pcol: pcol
         };
     }
+
+    getOldCorrectPosition(particle) {
+        var difference = Vector.subtract(this.oldCenter, this.center);
+        var oldCorrect = Vector.add(difference, particle.oldPosition);
+        return oldCorrect;
+    }
+
+    getVitesse(){
+        return Vector.subtract (this.oldCenter, this.center);
+    }
 }
 
 class Segment {
@@ -60,6 +71,8 @@ class Segment {
         this.b = b;
         this.color = "red";
         this.zone = null;
+        this.oldA = a.clone();
+        this.oldB = b.clone();
     }
 
     move(m) {
@@ -154,6 +167,21 @@ class Segment {
                 return "b";
         return "line";
     }
+
+    getOldCorrectPosition(particle) {
+        let oldMiddle = new Vector((this.oldA.x + this.oldB.x) / 2, (this.oldA.y + this.oldB.y) / 2);
+        let middle = new Vector((this.a.x + this.b.x) / 2, (this.a.y + this.b.y) / 2);
+        let difference = Vector.subtract(oldMiddle, middle);
+        let oldCorrect = Vector.add(particle.oldPosition, difference);
+        return oldCorrect;
+    }
+
+    getVitesse(){
+        let oldMiddle = new Vector((this.oldA.x + this.oldB.x) / 2, (this.oldA.y + this.oldB.y) / 2);
+        let middle = new Vector((this.a.x + this.b.x) / 2, (this.a.y + this.b.y) / 2);
+        let difference = Vector.subtract(oldMiddle, middle);
+        return difference;
+    }
 }
 
 Segment.errorMargin = 25;
@@ -183,6 +211,17 @@ class ObstacleManager {
         // Select l'obstacle si il est dans la zone ObstacleManager.clickZone pixels
         if (minDistance > ObstacleManager.clickZone)
             this.selected = null;
+    }
+
+    update() {
+        this.all.forEach(element => {
+            if (element.constructor.name == 'Circle')
+                element.oldCenter = element.center.clone();
+            else {
+                element.oldA = element.a.clone();
+                element.oldB = element.b.clone();
+            }
+        });
     }
 }
 

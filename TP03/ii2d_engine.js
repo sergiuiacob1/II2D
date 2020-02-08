@@ -22,7 +22,7 @@ class Engine {
     this.obstacleManager = new ObstacleManager();
     this.time = 0;
     this.deltaTime = 0.01;
-    this.epsilon = 1;
+    this.epsilon = 0.1;
   }
 
   draw() {
@@ -37,6 +37,7 @@ class Engine {
     this.particleManager.update();
     this.motion();
     this.collision();
+    this.obstacleManager.update();
   }
 
   loop() {
@@ -75,10 +76,24 @@ class Engine {
   }
 
   solveCollision(particle, obstacle) {
-    var res = obstacle.intersect(particle.oldPosition, particle.position);
+    var correctOldPosition = obstacle.getOldCorrectPosition(particle);
+    var res = obstacle.intersect(correctOldPosition, particle.position);
     if (res.isIntersect == true) {
-      // particle.position = particle.oldPosition;
       this.impulse(particle, res.ncol, res.pcol);
+
+      if (obstacle.constructor.name == 'Circle') {
+        if (obstacle.pointIsInside(correctOldPosition) == true && obstacle.pointIsInside(particle.position) == false) {
+          let pc = Vector.subtract(particle.position, obstacle.center);
+          let pcLength = pc.length();
+          let distance = obstacle.distance(particle.position) + 1;
+          particle.position.add(Vector.scalarProduct(pc, distance / pcLength));
+        }
+      }
+
+      // augment speed
+      let vitesse = obstacle.getVitesse().divide(this.deltaTime);
+      let oldv = particle.velocity.clone();
+      particle.velocity.add(vitesse);
     }
   }
 
@@ -109,7 +124,5 @@ class Engine {
     var H = Vector.scalarProduct(ncol, Vector.dot(Vector.subtract(particle.position, pcol), ncol));
     var xcol = Vector.add(particle.position, Vector.scalarProduct(H, 1 + this.epsilon));
     particle.position = xcol;
-
-
   }
 }

@@ -10,8 +10,8 @@ class GeneratorBox {
     this.birthRate = birthRate;
     this.min = new Vector(0, 0);
     this.max = new Vector(500, 500);
-    this.minTimeToLive = 30;
-    this.maxTimeToLive = 120;
+    this.minTimeToLive = 600;
+    this.maxTimeToLive = 6000;
   }
 
 
@@ -58,6 +58,12 @@ class Particle {
     this.acceleration = Vector.scalarProduct(this.force, 100).divide(this.mass);
     this.oldVelocity = null;
     this.oldPosition = null;
+  }
+
+  isOutsideOfCanvas(){
+    let x = this.position.x;
+    let y = this.position.y
+    return (x < 0 || x > CANVAS_WIDTH || y < 0 || y > CANVAS_HEIGHT);
   }
 
   draw() {
@@ -143,7 +149,7 @@ class ParticleManager {
   updateGenerator(generator, start, end) {
     // Arrêter les particules
     for (var i = start; i < start + generator.nbBirth; ++i) {
-      if (this.all[i].timeToLive <= 0) {
+      if (this.all[i].timeToLive <= 0 || (this.all[i].isOutsideOfCanvas())) {
         // On doit l'arrêter
         this.all[i].isAlive = false
         // Il garde juste les particles actives au debut du tableau

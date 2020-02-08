@@ -4,6 +4,9 @@ var engine;
 
 var mouseIsPressed = false;
 
+CANVAS_WIDTH = 500;
+CANVAS_HEIGHT = 500;
+
 
 window.addEventListener("load", main);
 

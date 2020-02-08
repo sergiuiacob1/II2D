@@ -15,3 +15,10 @@ Ajouts ou améliorations éventuels:
 	 
 Points difficiles:
 	- Trouver un moyen efficace pour créer et arrête les particules.
+
+
+TODO:
+	- parametrise this.epsilon (question 14)
+	- BONUS (question 5)
+	- if a particle leaves the canvas, kill it
+	- tell how we solved Question 15

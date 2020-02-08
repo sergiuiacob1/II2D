@@ -71,5 +71,6 @@ class Vector {
   }
 };
 
-
-
+Vector.prototype ["-"] = function () {
+  return new Vector(-this.x, -this.y);
+}
