@@ -60,8 +60,10 @@ class Circle {
         return oldCorrect;
     }
 
-    getVitesse(deltaTime){
-        return Vector.scalarProduct(Vector.subtract (this.oldCenter, this.center), deltaTime);
+    getVitesse(deltaTime) {
+        let vitesse = Vector.subtract(this.oldCenter, this.center);
+        vitesse.divide(deltaTime);
+        return vitesse;
     }
 }
 
@@ -176,7 +178,7 @@ class Segment {
         return oldCorrect;
     }
 
-    getVitesse(deltaTime){
+    getVitesse(deltaTime) {
         let oldMiddle = new Vector((this.oldA.x + this.oldB.x) / 2, (this.oldA.y + this.oldB.y) / 2);
         let middle = new Vector((this.a.x + this.b.x) / 2, (this.a.y + this.b.y) / 2);
         let difference = Vector.subtract(oldMiddle, middle);
@@ -202,6 +204,12 @@ class ObstacleManager {
         var minDistance = Infinity;
         var currentDistance;
         for (var i = 0; i < this.all.length; ++i) {
+            if (this.all[i].constructor.name == 'Circle' && this.all[i].pointIsInside(mouse) == true) {
+                minDistance = 0;
+                this.selected = this.all[i];
+                break;
+            }
+
             currentDistance = this.all[i].distance(mouse);
             if (currentDistance < minDistance) {
                 this.selected = this.all[i];

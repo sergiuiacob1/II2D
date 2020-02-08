@@ -68,7 +68,6 @@ class Particle {
 
   draw() {
     ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.timeToLive / this.initialTimeToLive})`;
-    // ctx.fillRect(this.position.x, this.position.y, 5, 5);
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, 2.5, 0, 2 * Math.PI, false);
     ctx.fill();
