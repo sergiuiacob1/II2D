@@ -26,14 +26,16 @@ class Engine {
   }
 
   draw() {
-    // ctx.clearRect(0, 0, 500, 500);
     ctx.fillStyle = '#ffa577';
-    ctx.fillRect(0, 0, 500, 500);
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     this.particleManager.draw();
     this.obstacleManager.draw();
   }
 
   updateData() {
+    this.epsilon = parseFloat(document.getElementById("epsilon-value").value);
+    document.getElementById("label-epsilon-value").innerHTML = `ε=${this.epsilon}`;
+
     this.particleManager.update();
     this.motion();
     this.collision();
@@ -55,6 +57,10 @@ class Engine {
     this.particleManager.motion(this.deltaTime);
   }
 
+  toggleRepulseur() {
+    this.particleManager.toggleRepulseur();
+  }
+
   updateRepulseur(mouse) {
     this.particleManager.updateRepulseurs(mouse);
   }
@@ -64,7 +70,11 @@ class Engine {
     for (var i = 0; i < this.particleManager.nbAliveMax; ++i) {
       if (this.particleManager.all[i].isAlive == false) {
         // I'm finished with the alive particles for this generator
-        i = currentGenerator * this.particleManager.nbAliveMax / this.particleManager.generatorList.length;
+        i = currentGenerator * Math.floor(this.particleManager.nbAliveMax / this.particleManager.generatorList.length);
+        // It's possible because of float divisions that i is still on a dead particle
+        // so apply the "patch" below
+        while (i < this.particleManager.nbAliveMax && this.particleManager.all[i].isAlive == false)
+          ++i;
         --i;
         ++currentGenerator;
         continue;

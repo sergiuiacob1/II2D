@@ -20,7 +20,7 @@ function handleMouseUp(event) {
 }
 
 function handleMouseMove(event) {
-    // engine.updateRepulseur(new Vector(event.offsetX, event.offsetY));
+    engine.updateRepulseur(new Vector(event.offsetX, event.offsetY));
 
     if (mouseIsPressed == false)
         return;

@@ -16,6 +16,9 @@ Ajouts ou améliorations éventuels:
 Points difficiles:
 	- Trouver un moyen efficace pour créer et arrête les particules.
 
+Bonuses done:
+	- question 18
+
 
 TODO:
 	- parametrise this.epsilon (question 14)

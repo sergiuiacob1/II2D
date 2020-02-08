@@ -9,9 +9,9 @@ class GeneratorBox {
     this.nbBirth = nbBirth;
     this.birthRate = birthRate;
     this.min = new Vector(0, 0);
-    this.max = new Vector(500, 500);
-    this.minTimeToLive = 600;
-    this.maxTimeToLive = 6000;
+    this.max = new Vector(CANVAS_WIDTH - 50, CANVAS_HEIGHT - 50);
+    this.minTimeToLive = 60 * 2;
+    this.maxTimeToLive = 60 * 5;
   }
 
 
@@ -56,11 +56,11 @@ class Particle {
     this.mass = 1;
     this.force = Vector.scalarProduct(new Vector(0, 9.81), this.mass);
     this.acceleration = Vector.scalarProduct(this.force, 100).divide(this.mass);
-    this.oldVelocity = null;
-    this.oldPosition = null;
+    this.oldVelocity = this.velocity.clone();
+    this.oldPosition = this.position.clone();
   }
 
-  isOutsideOfCanvas(){
+  isOutsideOfCanvas() {
     let x = this.position.x;
     let y = this.position.y
     return (x < 0 || x > CANVAS_WIDTH || y < 0 || y > CANVAS_HEIGHT);
@@ -103,10 +103,25 @@ class ParticleManager {
     this.generatorList = [];
     this.repulseurs = [];
     this.selected = null;
+    this.repulsorIsActivated = false;
+    this.shouldAddRandomGenerator = false;
 
-    for (var i = 0; i < this.nbAliveMax; ++i) {
+    this.resetParticles();
+  }
+
+  resetParticles() {
+    delete this.all;
+    this.all = [];
+    for (var i = 0; i < this.nbAliveMax; ++i)
       this.all.push(new Particle());
-    }
+
+    this.generatorList.forEach(generator => {
+      generator.nbBirth = 0;
+    });
+  }
+
+  toggleRepulseur() {
+    this.repulsorIsActivated = !this.repulsorIsActivated;
   }
 
   addGenerators(generators) {
@@ -114,6 +129,8 @@ class ParticleManager {
       this.generatorList.push(generator);
       this.repulseurs.push(new Vector(0, 0));
     });
+
+    this.resetParticles();
   }
 
   select(mouse) {
@@ -129,11 +146,21 @@ class ParticleManager {
   }
 
   motion(deltaTime) {
-    var start;
+    let step = Math.floor(this.nbAliveMax / this.generatorList.length);
+    let start = 0, end = step;
     for (var i = 0; i < this.generatorList.length; ++i) {
-      start = i * (this.all.length / this.generatorList.length);
-      for (var j = start; j < start + this.generatorList[i].nbBirth; ++j)
-        this.all[j].motion(deltaTime, [this.repulseurs[i]]);
+      if (i == this.generatorList.length - 1)
+        end = this.nbAliveMax;
+
+      for (var j = start; j < start + this.generatorList[i].nbBirth; ++j) {
+        let forces = [];
+        if (this.repulsorIsActivated)
+          forces.push(this.repulseurs[i]);
+        this.all[j].motion(deltaTime, forces);
+      }
+
+      start = end;
+      end += step;
     }
   }
 
@@ -177,6 +204,23 @@ class ParticleManager {
   }
 
   update() {
+    if (this.nbAliveMax != parseInt(document.getElementById("nbAliveMax-value").value)) {
+      this.nbAliveMax = parseInt(document.getElementById("nbAliveMax-value").value);
+      this.resetParticles();
+    }
+    document.getElementById("label-nbAliveMax-value").innerHTML = `nbAliveMax: ${this.nbAliveMax}`;
+
+    if (this.shouldAddRandomGenerator) {
+      this.shouldAddRandomGenerator = false;
+      let generator = new GeneratorBox(0, randInt(0, 10));
+      let x = randInt(50, CANVAS_WIDTH - 200);
+      let y = randInt(50, CANVAS_HEIGHT - 200);
+      generator.min.setXY(x, y); // setXY à faire dans la classe Vector
+      generator.max.setXY(x + randInt(20, 100), y + randInt(20, 100));
+      this.addGenerators([generator]);
+      return;
+    }
+
     // MAJ du timeToLive
     this.all.forEach(element => {
       if (element.isAlive)
@@ -184,8 +228,15 @@ class ParticleManager {
     });
 
     // Chaque générateur se charge d'une partie des particules
-    this.updateGenerator(this.generatorList[0], 0, this.nbAliveMax / 2);
-    this.updateGenerator(this.generatorList[1], this.nbAliveMax / 2, this.nbAliveMax);
+    let step = Math.floor(this.nbAliveMax / this.generatorList.length);
+    let start = 0, end = step;
+    for (var i = 0; i < this.generatorList.length - 1; ++i) {
+      this.updateGenerator(this.generatorList[i], start, end);
+      start = end;
+      end += step;
+    }
+
+    this.updateGenerator(this.generatorList[i], start, this.nbAliveMax);
   }
 
   draw() {
