@@ -17,9 +17,9 @@ Ajouts ou améliorations éventuels:
 	- Si la souris quitte le "canvas", le déplacement des obstacles s'arrête.
 
 	- TP03:
-	- Paramètres sont réglables (epsilon, deltaTime etc.)
-	- Un autre force existe: repulseur (Bonus question 5)
-	- Si un particle quitte le "canvas", elle est arrête
+	- On peut ajuster les paramètres (epsilon, deltaTime etc.).
+	- Un autre force existe: repulseur (Bonus question 5).
+	- Si une particle quitte le "canvas", elle seras arrêté.
 	- Pour chaque particule, traitez les collisions avec tous les obstacles puis ajustez la position et la vitesse (Bonus question 18)
 	 
 Points difficiles:

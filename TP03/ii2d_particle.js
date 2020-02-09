@@ -26,7 +26,7 @@ class GeneratorBox {
   }
 
   distance(mouse) {
-    // mouse is a Vector
+    // mouse est un Vecteur
     return Vector.distance(this.min, mouse);
   }
 
@@ -80,7 +80,7 @@ class Particle {
     var dp = Vector.scalarProduct(this.velocity, deltaTime);
     this.position.add(dp);
 
-    // update velocity 
+    // MAJ de la vitesse
     this.velocity.add(Vector.scalarProduct(this.acceleration, deltaTime));
 
     forces.forEach(force => {

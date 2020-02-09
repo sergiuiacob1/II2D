@@ -72,10 +72,10 @@ class Engine {
     var currentGenerator = 0;
     for (var i = 0; i < this.particleManager.nbAliveMax; ++i) {
       if (this.particleManager.all[i].isAlive == false) {
-        // I'm finished with the alive particles for this generator
+        // C'est fini avec les particules pour le generateur
         i = currentGenerator * Math.floor(this.particleManager.nbAliveMax / this.particleManager.generatorList.length);
-        // It's possible because of float divisions that i is still on a dead particle
-        // so apply the "patch" below
+        // Il est possible à cause des divisions des floats et qu'ils seront toujours sur des particules mortes
+        // On peut appliquer "patch" suivant
         while (i < this.particleManager.nbAliveMax && this.particleManager.all[i].isAlive == false)
           ++i;
         --i;
@@ -93,8 +93,7 @@ class Engine {
         adjustments["position"].add(res["position"]);
         adjustments["velocity"].add(res["velocity"]);
       });
-
-      // after treating all obstacles, adjust the particle's position and velocity
+      // après avoir traité tous les obstacles, on ajuste la position et la vitesse de la particule
       this.particleManager.all[i].position.add(adjustments["position"]);
       this.particleManager.all[i].velocity.add(adjustments["velocity"]);
     }
@@ -119,12 +118,12 @@ class Engine {
         }
       }
 
-      // augment speed
+      // augmenter la vitesse
       let vitesse = obstacle.getVitesse(this.deltaTime);
       particle.velocity.add(vitesse);
     }
 
-    // return the difference that it should be made
+    // retourner la différence
     var res = {
       "position": Vector.subtract(originalValues["position"], particle.position),
       "velocity": Vector.subtract(originalValues["velocity"], particle.velocity),
@@ -138,10 +137,10 @@ class Engine {
 
   impulse(particle, ncol, pcol) {
     var vcol, vn_new;
-    // make the normal unitary (length = 1)
+    // La normale unitaire (length = 1)
     ncol.divide(ncol.length());
 
-    // change the velocity
+    // changer la vitesse
     // vcol = vn_col + vt_col;
 
     // vn_col = -epsilon * vn_new
@@ -157,7 +156,7 @@ class Engine {
     particle.velocity = vcol;
 
 
-    // correct position
+    // corriger la position
     // xcol = xnew + (1 + epsilon) * H
     // H = ((m - xnew)*ncol)*ncol
     var H = Vector.scalarProduct(ncol, Vector.dot(Vector.subtract(particle.position, pcol), ncol));
