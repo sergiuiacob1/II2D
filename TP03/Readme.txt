@@ -1,10 +1,7 @@
 sergiu.iacob.etu@univ-lille.fr, aymane.elidrissi.etu@univ-lille.fr
 
-Fonctionnalités non présentes:
-	-
-
-Fonctionnalités présentes mais qui ont des soucis ou bugs:
-	-
+Fonctionnalités non présentes/présentes mais qui ont des soucis ou bugs:
+	- Tout fonctionne parfaitement.
 
 Ajouts ou améliorations éventuels:
 	- TP02:
@@ -23,4 +20,5 @@ Ajouts ou améliorations éventuels:
 	- Pour chaque particule, traitez les collisions avec tous les obstacles puis ajustez la position et la vitesse (Bonus question 18)
 	 
 Points difficiles:
-	- 
+	- Certains problèmes existaient en raison de la division des nombres "float". Pour ceux-ci, nous avons appliqué quelques "rustines".
+	- Par exemple, pour la solution de la question 15, nous avons déplacé la particule de la distance au contour du cercle. Mais il aurait toujours pu être en dehors du cercle, nous avons donc déplacé la particule d'un nombre supplémentaire de pixels vers le centre du cercle.
